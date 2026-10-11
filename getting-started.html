@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getting Started with Foxpit — Quick Setup Guide</title>
+  <meta name="description" content="Install Foxpit, connect Claude Code or OpenCode agents, configure Git worktrees, and orchestrate sub-agents in minutes.">
+  <link rel="canonical" href="https://lordon1a.github.io/foxpit-releases/getting-started.html">
+  <meta name="theme-color" content="#0E0C1A">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://lordon1a.github.io/foxpit-releases/getting-started.html">
+  <meta property="og:title" content="Getting Started with Foxpit — Quick Setup Guide">
+  <meta property="og:description" content="Install Foxpit, connect Claude Code or OpenCode agents, configure Git worktrees, and orchestrate sub-agents in minutes.">
+  <meta property="og:image" content="https://lordon1a.github.io/foxpit-releases/img/sonra.png">
+  <meta property="og:site_name" content="Foxpit">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Getting Started with Foxpit — Quick Setup Guide">
+  <meta name="twitter:description" content="Install Foxpit, connect Claude Code or OpenCode agents, configure Git worktrees, and orchestrate sub-agents in minutes.">
+  <meta name="twitter:image" content="https://lordon1a.github.io/foxpit-releases/img/sonra.png">
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="stylesheet" href="assets/site.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Getting Started with Foxpit — Quick Setup Guide",
+    "description": "Step-by-step installation and initial workflow guide for the Foxpit multi-agent cockpit.",
+    "url": "https://lordon1a.github.io/foxpit-releases/getting-started.html",
+    "image": "https://lordon1a.github.io/foxpit-releases/img/sonra.png",
+    "author": {
+      "@type": "Organization",
+      "name": "Foxpit Team"
+    }
+  }
+  </script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand" aria-label="Foxpit Homepage">
+        <svg width="28" height="28" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#E68A69"/>
+          <polygon points="12,14 26,22 18,34" fill="#0E0C1A"/>
+          <polygon points="52,14 38,22 46,34" fill="#0E0C1A"/>
+          <polygon points="32,54 10,28 32,36 54,28" fill="#0E0C1A"/>
+          <polygon points="32,54 18,34 26,38" fill="#F4F0EA"/>
+          <polygon points="32,54 46,34 38,38" fill="#F4F0EA"/>
+        </svg>
+        <span>Foxpit</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary Navigation">
+        <a href="getting-started.html" class="active">Getting Started</a>
+        <a href="alternatives.html">Alternatives</a>
+        <a href="faq.html">FAQ</a>
+        <a href="guides/run-multiple-claude-code-agents.html">Guides</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="https://github.com/lordon1a/foxpit-releases" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+        <a href="#download" class="btn btn-primary btn-sm">
+          Download
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div class="container">
+      <ul class="breadcrumbs" aria-label="Breadcrumb">
+        <li><a href="index.html">Home</a></li>
+        <li><span>Docs</span></li>
+        <li aria-current="page">Getting Started</li>
+      </ul>
+
+      <div class="content-wrapper">
+        <article>
+          <h1>Getting Started with Foxpit</h1>
+          <p class="lead">
+            Set up your multi-agent coding cockpit in less than five minutes. Foxpit coordinates Claude Code, Codex, and OpenCode with real terminals, automatic Git worktrees, and 3D status monitoring.
+          </p>
+
+          <div class="meta-bar">
+            <span>Last updated: October 2026</span>
+            <span>Reading time: 4 min</span>
+            <span>App version: 0.1.0</span>
+          </div>
+
+          <h2 id="requirements">1. Prerequisites &amp; System Requirements</h2>
+          <p>
+            Foxpit runs as a native desktop application on modern 64-bit operating systems:
+          </p>
+          <ul>
+            <li><strong>Operating System:</strong> Windows 10/11 x64, recent macOS, or a modern 64-bit Linux distribution.</li>
+            <li><strong>Git:</strong> Git 2.30+ installed and available in your system <code>PATH</code> (required for Git worktree isolation).</li>
+            <li><strong>AI CLI Tools:</strong> At least one CLI agent installed: Claude Code (<code>claude</code>), OpenAI Codex CLI, or OpenCode.</li>
+            <li><strong>Node.js:</strong> Not required. Foxpit reuses its bundled Electron/Node runtime to run its hook listeners and bridge, so you do not need a system Node.js install.</li>
+          </ul>
+
+          <h2 id="download">2. Installation</h2>
+          <p>
+            Grab the latest pre-built package for your operating system from the releases page:
+          </p>
+
+          <div class="card" style="margin: 1.5rem 0; background: var(--bg-surface);">
+            <h3>Download Foxpit v0.1.0</h3>
+            <p>Direct download links from GitHub Releases:</p>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem;">
+              <a href="https://github.com/lordon1a/foxpit-releases/releases/latest" class="btn btn-primary btn-sm">
+                Windows (.exe installer)
+              </a>
+              <a href="https://github.com/lordon1a/foxpit-releases/releases/latest" class="btn btn-secondary btn-sm">
+                macOS (.dmg, unsigned)
+              </a>
+              <a href="https://github.com/lordon1a/foxpit-releases/releases/latest" class="btn btn-secondary btn-sm">
+                Linux (.AppImage)
+              </a>
+            </div>
+          </div>
+
+          <p>
+            Launch the installer and open Foxpit. On first launch, the app sets up its local configuration directory and prepares the background loopback event server on <code>127.0.0.1</code>.
+          </p>
+
+          <h2 id="connect-agents">3. One-Click Setup ("Connect All")</h2>
+          <p>
+            To mirror terminal activities to the 3D office and track permissions in real time, Foxpit uses non-intrusive local CLI hooks.
+          </p>
+          <ol>
+            <li>Open the <strong>Settings</strong> or click <strong>Connect Agents</strong> in the header bar.</li>
+            <li>Click <strong>Connect All</strong>.</li>
+            <li>Foxpit automatically writes the lightweight hook scripts to your user configuration directory (e.g. <code>~/.claude/hooks/</code>).</li>
+          </ol>
+
+          <div class="callout tip">
+            <p><strong>Local-Only Event Hooks:</strong> The hooks communicate over local loopback (<code>127.0.0.1</code>). Foxpit sends no telemetry and uploads no code. The agent CLIs you launch still talk to their own model providers, and the app checks GitHub Releases for updates.</p>
+          </div>
+
+          <h2 id="open-project">4. Opening a Project &amp; Spawning Agents</h2>
+          <p>
+            Click <strong>Open Repository</strong> and select your project's root folder. Foxpit scans the Git repository and initializes the team canvas.
+          </p>
+          <ul>
+            <li><strong>Primary Orchestrator Terminal:</strong> Launch your main orchestrator (e.g., <code>claude</code>) in the lead terminal tab.</li>
+            <li><strong>Sub-Agent Terminals:</strong> When delegating sub-tasks or running tests in parallel, click <strong>New Agent</strong> or launch from the orchestrator.</li>
+            <li><strong>Automatic Git Worktree:</strong> Enable the <em>"Run on a separate branch"</em> option when adding an agent. Foxpit creates a linked worktree and branch so agents never collide on uncommitted files.</li>
+          </ul>
+
+          <div class="screenshot-frame">
+            <div class="screenshot-bar">
+              <span class="screenshot-dot"></span>
+              <span class="screenshot-dot"></span>
+              <span class="screenshot-dot"></span>
+              <span class="screenshot-title">Foxpit Worktree Badge</span>
+            </div>
+            <img src="img/worktree.png" alt="Foxpit Git worktree panel displaying isolated agent branches" width="1600" height="900" loading="lazy">
+          </div>
+
+          <h2 id="monitoring">5. Monitoring Agent States at a Glance</h2>
+          <p>
+            In the 3D office view, every agent sits at a desk represented by a mascot. Their visual status reflects what is happening inside the real terminal:
+          </p>
+          <ul>
+            <li><strong>Thinking / Running:</strong> The mascot types at the keyboard, indicating active LLM processing or command execution.</li>
+            <li><strong>Waiting for Approval:</strong> A bright alert flag appears above the desk, and your OS taskbar flashes. Click the agent's status bubble or the summary bar to jump straight to its terminal and approve.</li>
+            <li><strong>Idle / Done:</strong> The agent has completed its task and is awaiting further instructions.</li>
+            <li><strong>Stuck / Error:</strong> Red warning indicator signals a crashed command or API rate limit.</li>
+          </ul>
+
+          <h2 id="next-steps">Next Steps</h2>
+          <p>Now that your cockpit is up and running, explore advanced orchestration patterns:</p>
+          <ul>
+            <li><a href="guides/run-multiple-claude-code-agents.html">Run Multiple Claude Code Agents in Parallel</a> — Prevent race conditions across parallel sessions.</li>
+            <li><a href="guides/save-claude-quota-with-orchestration.html">Save Claude Quota with Orchestration</a> — Delegate tasks to lighter models to protect token limits.</li>
+            <li><a href="guides/git-worktrees-for-ai-agents.html">Git Worktrees for AI Agents</a> — Deep dive into branch isolation strategies.</li>
+            <li><a href="faq.html">Foxpit FAQ</a> — Common troubleshooting questions answered.</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <rect width="64" height="64" rx="14" fill="#E68A69"/>
+              <polygon points="12,14 26,22 18,34" fill="#0E0C1A"/>
+              <polygon points="52,14 38,22 46,34" fill="#0E0C1A"/>
+              <polygon points="32,54 10,28 32,36 54,28" fill="#0E0C1A"/>
+            </svg>
+            <span>Foxpit</span>
+          </div>
+          <p>Multi-agent cockpit for Claude Code, Codex, and OpenCode. Real terminals, 3D office, and Git worktree isolation.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="getting-started.html">Getting Started</a></li>
+            <li><a href="alternatives.html">Alternatives</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="privacy.html">Privacy</a></li>
+            <li><a href="terms.html">Terms</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Guides</h4>
+          <ul>
+            <li><a href="guides/run-multiple-claude-code-agents.html">Parallel Claude Code</a></li>
+            <li><a href="guides/save-claude-quota-with-orchestration.html">Save Claude Quota</a></li>
+            <li><a href="guides/git-worktrees-for-ai-agents.html">Git Worktrees Guide</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Project</h4>
+          <ul>
+            <li><a href="https://github.com/lordon1a/foxpit-releases" target="_blank" rel="noopener noreferrer">Releases Repository</a></li>
+            <li><a href="https://github.com/lordon1a/foxpit-releases/releases" target="_blank" rel="noopener noreferrer">Releases &amp; Changelog</a></li>
+            <li><a href="https://github.com/lordon1a/foxpit-releases/issues" target="_blank" rel="noopener noreferrer">Issue Tracker</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Foxpit. 3-day free trial, no card needed.</div>
+        <div>No telemetry &bull; Local-only (127.0.0.1)</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/site.js"></script>
+</body>
+</html>

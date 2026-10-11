@@ -1,0 +1,17 @@
+{
+  "name": "Foxpit - Multi-Agent Desktop Cockpit",
+  "short_name": "Foxpit",
+  "description": "Multi-agent cockpit for Claude Code, Codex and OpenCode in real terminals with 3D office and git worktree isolation.",
+  "start_url": "/foxpit/",
+  "display": "standalone",
+  "background_color": "#0E0C1A",
+  "theme_color": "#0E0C1A",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

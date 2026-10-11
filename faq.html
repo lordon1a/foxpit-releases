@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foxpit FAQ — Multi-Agent Questions &amp; Answers</title>
+  <meta name="description" content="Answers to frequently asked questions about Foxpit, multi-agent workflows, Git worktrees, Claude Code hooks, and privacy.">
+  <link rel="canonical" href="https://lordon1a.github.io/foxpit-releases/faq.html">
+  <meta name="theme-color" content="#0E0C1A">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://lordon1a.github.io/foxpit-releases/faq.html">
+  <meta property="og:title" content="Foxpit FAQ — Multi-Agent Questions &amp; Answers">
+  <meta property="og:description" content="Answers to frequently asked questions about Foxpit, multi-agent workflows, Git worktrees, Claude Code hooks, and privacy.">
+  <meta property="og:image" content="https://lordon1a.github.io/foxpit-releases/img/sonra.png">
+  <meta property="og:site_name" content="Foxpit">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Foxpit FAQ — Multi-Agent Questions &amp; Answers">
+  <meta name="twitter:description" content="Answers to frequently asked questions about Foxpit, multi-agent workflows, Git worktrees, Claude Code hooks, and privacy.">
+  <meta name="twitter:image" content="https://lordon1a.github.io/foxpit-releases/img/sonra.png">
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="stylesheet" href="assets/site.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Foxpit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Foxpit is a desktop application (Windows, macOS, Linux) that acts as a multi-agent cockpit for terminal-based coding assistants like Claude Code, Codex, and OpenCode. It embeds real terminals, visualizes agents in a 3D isometric office, and provides automatic Git worktree isolation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Foxpit send any source code or telemetry to external servers?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Foxpit's hooks and terminal monitors talk only over 127.0.0.1 and the app collects no analytics. It contacts two services: its account server, to sign you in and check your plan, and GitHub Releases, to check for updates. The coding agents you run still send prompts and code to their own model providers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which coding agents and CLI tools are supported?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Foxpit currently integrates with Claude Code, OpenAI Codex CLI, and OpenCode. Because terminals are powered by node-pty, any standard CLI process can run inside Foxpit."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need Node.js installed on my system to run Foxpit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. The one-click 'Connect all' feature reuses Foxpit's bundled Electron/Node runtime, so it works even if you do not have system Node.js installed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does Git worktree isolation work in Foxpit?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "When you spawn a sub-agent with isolation enabled, Foxpit runs git worktree add to check out a new dedicated branch into a separate folder. This prevents parallel agents from modifying the same files or fighting over git staging."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does Foxpit alert me when an agent asks for permission?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "When an agent pauses for confirmation before running a bash command or writing a file, Foxpit flashes the OS taskbar, displays an alert flag above the agent desk in the 3D office, and rings a subtle audio chime."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does orchestrator delegation save token quota and API costs?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A primary orchestrator agent running a flagship model can delegate mechanical sub-tasks such as test execution, lint fixes, and research to sub-agents running lighter, cheaper models in separate terminals, reducing overall token consumption on your most expensive quota."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need an account?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, a free one. Sign in with an email code, Google or GitHub to start your 3-day free trial. No card needed." }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens after the 3-day trial?",
+        "acceptedAnswer": { "@type": "Answer", "text": "You will need Foxpit Pro to keep using the app. Pro is not open yet: until it is, Foxpit keeps working after your trial and we will email you when Pro is available." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand" aria-label="Foxpit Homepage">
+        <svg width="28" height="28" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#E68A69"/>
+          <polygon points="12,14 26,22 18,34" fill="#0E0C1A"/>
+          <polygon points="52,14 38,22 46,34" fill="#0E0C1A"/>
+          <polygon points="32,54 10,28 32,36 54,28" fill="#0E0C1A"/>
+          <polygon points="32,54 18,34 26,38" fill="#F4F0EA"/>
+          <polygon points="32,54 46,34 38,38" fill="#F4F0EA"/>
+        </svg>
+        <span>Foxpit</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary Navigation">
+        <a href="getting-started.html">Getting Started</a>
+        <a href="alternatives.html">Alternatives</a>
+        <a href="faq.html" class="active">FAQ</a>
+        <a href="guides/run-multiple-claude-code-agents.html">Guides</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="https://github.com/lordon1a/foxpit-releases" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+        <a href="getting-started.html#download" class="btn btn-primary btn-sm">
+          Download
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div class="container">
+      <ul class="breadcrumbs" aria-label="Breadcrumb">
+        <li><a href="index.html">Home</a></li>
+        <li><span>Docs</span></li>
+        <li aria-current="page">FAQ</li>
+      </ul>
+
+      <div class="content-wrapper">
+        <article>
+          <h1>Frequently Asked Questions</h1>
+          <p class="lead">
+            Common questions about Foxpit architecture, agent compatibility, privacy guarantees, and Git worktree isolation.
+          </p>
+
+          <div class="meta-bar">
+            <span>Updated: October 2026</span>
+            <span>Category: Documentation</span>
+          </div>
+
+          <details class="faq-item" open>
+            <summary>What is Foxpit?</summary>
+            <div class="faq-answer">
+              <p>Foxpit is a desktop application (Windows, macOS, Linux) built with Electron and Three.js. It gives developers a visual cockpit to run and monitor multiple autonomous coding agents — such as Claude Code, Codex, and OpenCode — inside real terminals. Agents are visualized in a 3D isometric office, allowing you to see who is working, waiting for approval, or stuck at a single glance.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Does Foxpit send code or telemetry to any external servers?</summary>
+            <div class="faq-answer">
+              <p><strong>Not by the app.</strong> Foxpit's event hooks and terminal listeners connect to <code>127.0.0.1</code> on your machine, and the app collects no analytics. The app makes two kinds of outbound requests: signing in and checking your plan with the Foxpit account server (your email, an account id and an anonymous device hash, never code), and an update check against GitHub Releases. Keep in mind that the coding agents you run inside Foxpit still send your prompts and code to their own model providers — that is how those CLIs work.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Which coding agents and CLI tools are supported?</summary>
+            <div class="faq-answer">
+              <p>Foxpit currently provides one-click hook integration for <strong>Claude Code</strong>, <strong>OpenAI Codex CLI</strong>, and <strong>OpenCode</strong>. Furthermore, because terminals are emulated via <code>node-pty</code> and xterm, you can run any standard CLI tool, bash script, or custom agent runner inside the cockpit.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Do I need Node.js installed on my machine?</summary>
+            <div class="faq-answer">
+              <p>No. The "Connect All" setup reuses Foxpit's bundled Electron/Node runtime, so it configures the necessary hook scripts without needing a global Node.js installation on your operating system.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>How does Git worktree isolation protect my codebase?</summary>
+            <div class="faq-answer">
+              <p>When running multiple AI agents in parallel, they can easily overwrite each other's changes or create merge collisions in the main directory. Foxpit leverages native <code>git worktree</code> functionality: each sub-agent is assigned its own directory and isolated Git branch. Once an agent finishes its task, you can review the diff and merge cleanly.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>How does Foxpit alert me when an agent asks for approval?</summary>
+            <div class="faq-answer">
+              <p>Autonomous agents frequently pause to request confirmation before executing risky terminal commands or editing files. When this occurs, Foxpit immediately raises a visual banner in the 3D office, pulses the mascot desk, flashes the OS taskbar, and sends a system notification. Click the agent's status bubble or the summary bar to jump straight to that terminal.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>How does orchestrator delegation save token quota and money?</summary>
+            <div class="faq-answer">
+              <p>Flagship models have strict token limits and higher pricing. Instead of letting the flagship model run slow compile commands or parse verbose test logs, Foxpit's orchestration workflow lets the lead agent assign sub-agents running cheaper models (such as a Haiku-class model, a free OpenCode model, or DeepSeek) inside optional worktrees. Because you pick each mascot's driver and model, you can keep expensive quota for planning and review.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>How does Foxpit handle updates?</summary>
+            <div class="faq-answer">
+              <p>Foxpit features built-in auto-updates backed by GitHub Releases. When a new stable version is published, Foxpit can download and apply the update seamlessly without requiring manual re-installation.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Do I need an account?</summary>
+            <div class="faq-answer">
+              <p>Yes, a free one. Sign in with an email code, Google or GitHub to start your 3-day free trial. No card needed. Your account only holds your email and plan; your code stays on your computer.</p>
+            </div>
+          </details>
+
+          <details class="faq-item">
+            <summary>What happens after the 3-day trial?</summary>
+            <div class="faq-answer">
+              <p>You will need Foxpit Pro to keep using the app. Pro is not open yet: until it is, Foxpit keeps working after your trial and we will email you when Pro is available.</p>
+            </div>
+          </details>
+
+          <div style="margin-top: 3rem; text-align: center;">
+            <p>Still have questions? Check out our guides or join the discussion on GitHub:</p>
+            <p>
+              <a href="guides/run-multiple-claude-code-agents.html" class="btn btn-secondary btn-sm" style="margin-right: 0.5rem;">Explore Guides</a>
+              <a href="https://github.com/lordon1a/foxpit-releases/issues" class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer">Ask on GitHub Issues</a>
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <rect width="64" height="64" rx="14" fill="#E68A69"/>
+              <polygon points="12,14 26,22 18,34" fill="#0E0C1A"/>
+              <polygon points="52,14 38,22 46,34" fill="#0E0C1A"/>
+              <polygon points="32,54 10,28 32,36 54,28" fill="#0E0C1A"/>
+            </svg>
+            <span>Foxpit</span>
+          </div>
+          <p>Multi-agent cockpit for Claude Code, Codex, and OpenCode. Real terminals, 3D office, and Git worktree isolation.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="getting-started.html">Getting Started</a></li>
+            <li><a href="alternatives.html">Alternatives</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="privacy.html">Privacy</a></li>
+            <li><a href="terms.html">Terms</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Guides</h4>
+          <ul>
+            <li><a href="guides/run-multiple-claude-code-agents.html">Parallel Claude Code</a></li>
+            <li><a href="guides/save-claude-quota-with-orchestration.html">Save Claude Quota</a></li>
+            <li><a href="guides/git-worktrees-for-ai-agents.html">Git Worktrees Guide</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Project</h4>
+          <ul>
+            <li><a href="https://github.com/lordon1a/foxpit-releases" target="_blank" rel="noopener noreferrer">Releases Repository</a></li>
+            <li><a href="https://github.com/lordon1a/foxpit-releases/releases" target="_blank" rel="noopener noreferrer">Releases &amp; Changelog</a></li>
+            <li><a href="https://github.com/lordon1a/foxpit-releases/issues" target="_blank" rel="noopener noreferrer">Issue Tracker</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Foxpit. 3-day free trial, no card needed.</div>
+        <div>No telemetry &bull; Local-only (127.0.0.1)</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/site.js"></script>
+</body>
+</html>

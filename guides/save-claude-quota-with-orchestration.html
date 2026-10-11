@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save Claude Quota with Multi-Agent Orchestration</title>
+  <meta name="description" content="Learn how to conserve flagship-model token quotas by delegating sub-tasks, research, and tests to cheaper models.">
+  <link rel="canonical" href="https://lordon1a.github.io/foxpit-releases/guides/save-claude-quota-with-orchestration.html">
+  <meta name="theme-color" content="#0E0C1A">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://lordon1a.github.io/foxpit-releases/guides/save-claude-quota-with-orchestration.html">
+  <meta property="og:title" content="Save Claude Quota with Multi-Agent Orchestration">
+  <meta property="og:description" content="Learn how to conserve flagship-model token quotas by delegating sub-tasks, research, and tests to cheaper models.">
+  <meta property="og:image" content="https://lordon1a.github.io/foxpit-releases/img/sonra.png">
+  <meta property="og:site_name" content="Foxpit">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Save Claude Quota with Multi-Agent Orchestration">
+  <meta name="twitter:description" content="Learn how to conserve flagship-model token quotas by delegating sub-tasks, research, and tests to cheaper models.">
+  <meta name="twitter:image" content="https://lordon1a.github.io/foxpit-releases/img/sonra.png">
+
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="manifest" href="../site.webmanifest">
+  <link rel="stylesheet" href="../assets/site.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Save Claude Quota with Multi-Agent Orchestration",
+    "description": "Techniques for preserving expensive flagship-model token quotas using orchestrator delegation.",
+    "url": "https://lordon1a.github.io/foxpit-releases/guides/save-claude-quota-with-orchestration.html",
+    "image": "https://lordon1a.github.io/foxpit-releases/img/sonra.png",
+    "datePublished": "2026-10-06",
+    "author": {
+      "@type": "Organization",
+      "name": "Foxpit Team"
+    }
+  }
+  </script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="brand" aria-label="Foxpit Homepage">
+        <svg width="28" height="28" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#E68A69"/>
+          <polygon points="12,14 26,22 18,34" fill="#0E0C1A"/>
+          <polygon points="52,14 38,22 46,34" fill="#0E0C1A"/>
+          <polygon points="32,54 10,28 32,36 54,28" fill="#0E0C1A"/>
+          <polygon points="32,54 18,34 26,38" fill="#F4F0EA"/>
+          <polygon points="32,54 46,34 38,38" fill="#F4F0EA"/>
+        </svg>
+        <span>Foxpit</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary Navigation">
+        <a href="../getting-started.html">Getting Started</a>
+        <a href="../alternatives.html">Alternatives</a>
+        <a href="../faq.html">FAQ</a>
+        <a href="save-claude-quota-with-orchestration.html" class="active">Guides</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="https://github.com/lordon1a/foxpit-releases" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+        <a href="../getting-started.html#download" class="btn btn-primary btn-sm">
+          Download
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div class="container">
+      <ul class="breadcrumbs" aria-label="Breadcrumb">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../getting-started.html">Docs</a></li>
+        <li><span>Guides</span></li>
+        <li aria-current="page">Save Claude Quota</li>
+      </ul>
+
+      <div class="content-wrapper">
+        <article>
+          <h1>Save Claude Quota with Multi-Agent Orchestration</h1>
+          <p class="lead">
+            Flagship coding models excel at high-level architecture and edge-case reasoning, but wasting their context window on verbose test runs and repetitive refactors drains quotas fast. Here is how to delegate smartly.
+          </p>
+
+          <div class="meta-bar">
+            <span>Published: October 2026</span>
+            <span>Reading time: 7 min</span>
+            <span>Topic: Token Optimization</span>
+          </div>
+
+          <h2>The Context and Quota Trap</h2>
+          <p>
+            When you run an autonomous agent on a large codebase, token consumption is dominated by non-reasoning overhead:
+          </p>
+          <ul>
+            <li><strong>Command Outputs:</strong> Running a test suite or type-check script often dumps hundreds of lines of compiler logs into the agent's context window.</li>
+            <li><strong>Repetitive Edits:</strong> Writing boilerplate getters, test assertions, or translation dictionaries requires high token volume but low algorithmic complexity.</li>
+            <li><strong>Context Compounding:</strong> As a single agent session grows, every subsequent turn re-sends the entire conversation history to the model. The per-turn cost grows with the session, so the cumulative cost grows faster than linearly — roughly quadratically in the number of turns.</li>
+          </ul>
+
+          <p>
+            If you run a top-tier model for both high-level design and low-level execution, you quickly hit rate limits or exhaust monthly token budgets.
+          </p>
+
+          <h2>The Orchestrator-Worker Architecture</h2>
+          <p>
+            The solution is a tiered agent architecture:
+          </p>
+          <ol>
+            <li><strong>Orchestrator Agent (Flagship Model):</strong> Reads the high-level goal, surveys the project architecture, writes precise module specifications, and assigns narrow implementation tasks.</li>
+            <li><strong>Worker Agents (Economical Models):</strong> Run in parallel terminals or worktrees using lighter models (for example a Haiku-class model, a free OpenCode model, or DeepSeek). They receive small, targeted prompts and return clean code diffs.</li>
+            <li><strong>Verification Agent:</strong> A lightweight runner that executes unit tests, lints the diff, and reports a concise pass/fail status back to the orchestrator.</li>
+          </ol>
+
+          <div class="callout tip">
+            <p><strong>Rule of Thumb:</strong> Never feed more than 50 lines of raw compiler or test output to your orchestrator. Have a sub-agent summarize errors into a three-bullet defect list.</p>
+          </div>
+
+          <h2>How to Set Up Model Delegation in Practice</h2>
+
+          <h3>Pattern 1: The Scoped Prompt Envelope</h3>
+          <p>
+            When having the orchestrator delegate a task to a worker agent, use a standardized prompt envelope that limits the sub-agent's search space:
+          </p>
+
+          <pre><code># Delegated worker prompt
+claude --model &lt;cheaper-model&gt; "TASK: Implement validateEmail() and validatePassword() in src/utils/validators.ts.
+CONSTRAINTS:
+- Use only regex standards defined in docs/security.md.
+- Do not modify any files outside src/utils/.
+- When complete, run 'npm test test/validators.test.ts' and confirm 100% pass."</code></pre>
+
+          <p>
+            Because the worker model is constrained to one file and one test file, its context window stays small (under 15,000 tokens), costing a fraction of a full Sonnet interaction.
+          </p>
+
+          <h3>Pattern 2: Worktree Sandboxing for Economical Models</h3>
+          <p>
+            Economical models are fast and cheap, but they occasionally make hallucinated file edits. Giving the worker agent its own Git worktree ensures that any unintended modifications remain strictly isolated:
+          </p>
+
+          <pre><code># Create isolated worktree for worker agent
+git worktree add ../worker-validators -b chore/validators
+
+# Worker performs tasks in isolation
+cd ../worker-validators
+claude --model &lt;cheaper-model&gt; "Implement email validation..."
+
+# Check diff cleanly from main directory
+git diff main..chore/validators</code></pre>
+
+          <h2>Monitoring Live Token &amp; Context Usage in Foxpit</h2>
+          <p>
+            Managing multiple models across scattered terminal sessions can make tracking spend difficult. <strong>Foxpit</strong> reads agent transcripts and hook events locally to summarize usage:
+          </p>
+
+          <ul>
+            <li><strong>Context Usage Bar:</strong> Each agent's card shows a context-usage bar so you can see when a session is filling up its context window and should be compacted or restarted. The Claude transcript reader estimates the window (defaulting to 200k tokens) and widens it when the model reports a larger one.</li>
+            <li><strong>Cumulative Token Counter:</strong> Each agent card shows a single cumulative token counter (input + output tokens) plus a completed-task count. A persistent per-agent ledger records tasks, tool calls, and an estimated cost, as well as savings when work ran on a free model.</li>
+            <li><strong>Orchestrator and Model Assignment:</strong> The first agent in a project is the orchestrator mascot (Fox). You can pick each mascot's driver and model in the team settings, so an orchestrator can assign work to sub-agents running cheaper or free endpoints.</li>
+          </ul>
+
+          <div class="screenshot-frame">
+            <div class="screenshot-bar">
+              <span class="screenshot-dot"></span>
+              <span class="screenshot-dot"></span>
+              <span class="screenshot-dot"></span>
+              <span class="screenshot-title">Foxpit Agent Details &amp; Token Metrics</span>
+            </div>
+            <img src="../img/sonra.png" alt="Foxpit dashboard displaying live token usage and context metrics for autonomous coding agents" width="1600" height="900" loading="lazy">
+          </div>
+
+          <h2>Key Takeaways</h2>
+          <ul>
+            <li>Reserve expensive flagship models for planning, high-level code review, and hard debugging.</li>
+            <li>Delegate repetitive implementations, test generation, and documentation to lighter models.</li>
+            <li>Never allow large test log dumps into the orchestrator's context window.</li>
+            <li>Use Git worktrees to isolate worker agent experiments safely.</li>
+          </ul>
+
+          <div style="margin-top: 3rem; text-align: center;">
+            <p>Ready to cut your AI coding token bills?</p>
+            <p>
+              <a href="../getting-started.html" class="btn btn-primary btn-sm" style="margin-right: 0.5rem;">Download Foxpit</a>
+              <a href="run-multiple-claude-code-agents.html" class="btn btn-secondary btn-sm">Parallel Agents Guide</a>
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <rect width="64" height="64" rx="14" fill="#E68A69"/>
+              <polygon points="12,14 26,22 18,34" fill="#0E0C1A"/>
+              <polygon points="52,14 38,22 46,34" fill="#0E0C1A"/>
+              <polygon points="32,54 10,28 32,36 54,28" fill="#0E0C1A"/>
+            </svg>
+            <span>Foxpit</span>
+          </div>
+          <p>Multi-agent cockpit for Claude Code, Codex, and OpenCode. Real terminals, 3D office, and Git worktree isolation.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../getting-started.html">Getting Started</a></li>
+            <li><a href="../alternatives.html">Alternatives</a></li>
+            <li><a href="../faq.html">FAQ</a></li>
+            <li><a href="../privacy.html">Privacy</a></li>
+            <li><a href="../terms.html">Terms</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Guides</h4>
+          <ul>
+            <li><a href="run-multiple-claude-code-agents.html">Parallel Claude Code</a></li>
+            <li><a href="save-claude-quota-with-orchestration.html">Save Claude Quota</a></li>
+            <li><a href="git-worktrees-for-ai-agents.html">Git Worktrees Guide</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Project</h4>
+          <ul>
+            <li><a href="https://github.com/lordon1a/foxpit-releases" target="_blank" rel="noopener noreferrer">Releases Repository</a></li>
+            <li><a href="https://github.com/lordon1a/foxpit-releases/releases" target="_blank" rel="noopener noreferrer">Releases &amp; Changelog</a></li>
+            <li><a href="https://github.com/lordon1a/foxpit-releases/issues" target="_blank" rel="noopener noreferrer">Issue Tracker</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Foxpit. 3-day free trial, no card needed.</div>
+        <div>No telemetry &bull; Local-only (127.0.0.1)</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/site.js"></script>
+</body>
+</html>

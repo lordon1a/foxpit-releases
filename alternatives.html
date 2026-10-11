@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foxpit Alternatives &amp; Comparison (2026)</title>
+  <meta name="description" content="Compare Foxpit with common approaches to multi-agent coding: embedded terminals, terminal multiplexers, web dashboards, and kanban boards.">
+  <link rel="canonical" href="https://lordon1a.github.io/foxpit-releases/alternatives.html">
+  <meta name="theme-color" content="#0E0C1A">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://lordon1a.github.io/foxpit-releases/alternatives.html">
+  <meta property="og:title" content="Foxpit Alternatives &amp; Comparison (2026)">
+  <meta property="og:description" content="Compare Foxpit with common approaches to multi-agent coding: embedded terminals, terminal multiplexers, web dashboards, and kanban boards.">
+  <meta property="og:image" content="https://lordon1a.github.io/foxpit-releases/img/sonra.png">
+  <meta property="og:site_name" content="Foxpit">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Foxpit Alternatives &amp; Comparison (2026)">
+  <meta name="twitter:description" content="Compare Foxpit with common approaches to multi-agent coding: embedded terminals, terminal multiplexers, web dashboards, and kanban boards.">
+  <meta name="twitter:image" content="https://lordon1a.github.io/foxpit-releases/img/sonra.png">
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="stylesheet" href="assets/site.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Foxpit Alternatives & Comparison (2026)",
+    "description": "A category-level overview of ways to run and supervise multiple terminal coding agents, and where Foxpit fits.",
+    "url": "https://lordon1a.github.io/foxpit-releases/alternatives.html"
+  }
+  </script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand" aria-label="Foxpit Homepage">
+        <svg width="28" height="28" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#E68A69"/>
+          <polygon points="12,14 26,22 18,34" fill="#0E0C1A"/>
+          <polygon points="52,14 38,22 46,34" fill="#0E0C1A"/>
+          <polygon points="32,54 10,28 32,36 54,28" fill="#0E0C1A"/>
+          <polygon points="32,54 18,34 26,38" fill="#F4F0EA"/>
+          <polygon points="32,54 46,34 38,38" fill="#F4F0EA"/>
+        </svg>
+        <span>Foxpit</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary Navigation">
+        <a href="getting-started.html">Getting Started</a>
+        <a href="alternatives.html" class="active">Alternatives</a>
+        <a href="faq.html">FAQ</a>
+        <a href="guides/run-multiple-claude-code-agents.html">Guides</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="https://github.com/lordon1a/foxpit-releases" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+        <a href="getting-started.html#download" class="btn btn-primary btn-sm">
+          Download
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div class="container">
+      <ul class="breadcrumbs" aria-label="Breadcrumb">
+        <li><a href="index.html">Home</a></li>
+        <li><span>Docs</span></li>
+        <li aria-current="page">Alternatives</li>
+      </ul>
+
+      <div class="content-wrapper">
+        <article>
+          <h1>Foxpit Alternatives &amp; Comparison</h1>
+          <p class="lead">
+            A practical, category-level look at the ways developers run and supervise multiple terminal-based coding agents in 2026 — and where Foxpit fits.
+          </p>
+
+          <div class="meta-bar">
+            <span>Published: October 2026</span>
+            <span>Category: Ecosystem Analysis</span>
+          </div>
+
+          <p>
+            As autonomous coding agents like Claude Code, Codex, and OpenCode become part of daily work, developers run into the same operational problems: juggling terminal tabs, avoiding file conflicts, not missing approval prompts, and keeping token budgets under control.
+          </p>
+          <p>
+            Several categories of tooling have emerged to help. This page explains what each approach is good at and where Foxpit sits. It deliberately avoids naming specific third-party products, because their features and licenses change frequently and we cannot keep that information accurate for every reader.
+          </p>
+
+          <h2 id="approaches">Approaches at a Glance</h2>
+
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Approach</th>
+                  <th>Typical Interface</th>
+                  <th>Good At</th>
+                  <th>Trade-offs</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Embedded-terminal cockpit</strong></td>
+                  <td>Desktop app with real PTY terminals</td>
+                  <td>Native shell fidelity plus live visual status of every agent</td>
+                  <td>Requires a desktop OS; larger download than a shell script</td>
+                </tr>
+                <tr>
+                  <td><strong>Terminal multiplexer</strong></td>
+                  <td>tmux-style panes and splits</td>
+                  <td>Zero GUI, SSH-friendly, works everywhere a terminal does</td>
+                  <td>No graphical at-a-glance alerts; isolation and worktrees are handled manually</td>
+                </tr>
+                <tr>
+                  <td><strong>Web dashboard</strong></td>
+                  <td>Browser UI backed by a local server</td>
+                  <td>Accessible from any browser; easy to extend</td>
+                  <td>Extra server process; terminal fidelity and desktop alerts vary</td>
+                </tr>
+                <tr>
+                  <td><strong>Kanban task board</strong></td>
+                  <td>Column-based task board</td>
+                  <td>Tracking work items through backlog, in progress, review, and done</td>
+                  <td>Less real-time visibility into whether an agent is thinking or blocked</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 id="where-foxpit-fits">Where Foxpit Fits</h2>
+          <p>
+            Foxpit combines the embedded-terminal and at-a-glance-monitoring approaches in a single desktop app. It runs real interactive terminals for Claude Code, Codex, and OpenCode, and visualizes each agent as a mascot in an isometric 3D office.
+          </p>
+          <ul>
+            <li><strong>Real embedded terminals:</strong> Powered by <code>node-pty</code> and xterm, so you run your actual CLI rather than a reimplemented chat wrapper.</li>
+            <li><strong>Agent status at a glance:</strong> Each mascot shows a status — working, thinking, waiting for approval, stuck, idle, done, or error — with a status bubble and a summary bar.</li>
+            <li><strong>Approval alerts:</strong> When an agent pauses for permission, the office raises an alert flag, the OS taskbar flashes, and a system notification is sent.</li>
+            <li><strong>Optional per-agent Git worktrees:</strong> Enable "run on a separate branch" and the app provisions a linked worktree so parallel agents do not collide on uncommitted files.</li>
+            <li><strong>Sub-agent delegation:</strong> A built-in bridge lets an orchestrator assign scoped tasks to other mascots, each mapped to a driver and model you choose (including cheaper or free models).</li>
+            <li><strong>Context and token visibility:</strong> Agent cards show a context-usage bar and a cumulative token counter, and a ledger tracks tasks, tool calls, and estimated cost/savings.</li>
+            <li><strong>Local-only event transport:</strong> Hooks talk over <code>127.0.0.1</code> and the app sends no telemetry.</li>
+          </ul>
+
+          <h2 id="what-to-look-for">What to Look For in Any Tool</h2>
+          <ol>
+            <li><strong>Does it run the real CLI?</strong> Terminal emulation via a PTY preserves interactive prompts, ANSI output, and signals that a chat wrapper may not.</li>
+            <li><strong>How does it isolate parallel agents?</strong> Linked Git worktrees avoid the slow disk duplication of full clones while keeping each agent's files separate.</li>
+            <li><strong>How does it surface approvals?</strong> An agent blocked on confirmation is wasted time; desktop-level alerts are easy to notice while you focus elsewhere.</li>
+            <li><strong>What does it send over the network?</strong> Prefer tools whose own telemetry is opt-in or absent, and remember that the agent CLIs themselves still contact their model providers.</li>
+            <li><strong>How does it handle updates and cleanup?</strong> Look for a clear update path and a way to remove worktrees without leaving orphaned directories.</li>
+          </ol>
+
+          <h2 id="why-foxpit">Why Choose Foxpit?</h2>
+          <ul>
+            <li><strong>Approval visibility:</strong> Status flags, a summary bar, taskbar flashing, and system notifications make a waiting agent obvious.</li>
+            <li><strong>Cross-vendor flexibility:</strong> Switch between Anthropic Claude Code, OpenAI Codex, and OpenCode within the same cockpit.</li>
+            <li><strong>Quota delegation:</strong> Route mechanical sub-tasks to lighter or free models while a flagship model handles planning.</li>
+            <li><strong>Native Git worktree isolation:</strong> Parallel agents can work on separate linked checkouts, avoiding file race conditions.</li>
+            <li><strong>Local-only by design:</strong> Event hooks stay on <code>127.0.0.1</code> and the app collects no telemetry.</li>
+          </ul>
+
+          <div style="margin-top: 2.5rem; text-align: center;">
+            <a href="getting-started.html" class="btn btn-primary">Try Foxpit Today</a>
+            <a href="https://github.com/lordon1a/foxpit-releases/releases/latest" class="btn btn-secondary" style="margin-left: 0.5rem;" target="_blank" rel="noopener noreferrer">Download</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <rect width="64" height="64" rx="14" fill="#E68A69"/>
+              <polygon points="12,14 26,22 18,34" fill="#0E0C1A"/>
+              <polygon points="52,14 38,22 46,34" fill="#0E0C1A"/>
+              <polygon points="32,54 10,28 32,36 54,28" fill="#0E0C1A"/>
+            </svg>
+            <span>Foxpit</span>
+          </div>
+          <p>Multi-agent cockpit for Claude Code, Codex, and OpenCode. Real terminals, 3D office, and Git worktree isolation.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="getting-started.html">Getting Started</a></li>
+            <li><a href="alternatives.html">Alternatives</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="privacy.html">Privacy</a></li>
+            <li><a href="terms.html">Terms</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Guides</h4>
+          <ul>
+            <li><a href="guides/run-multiple-claude-code-agents.html">Parallel Claude Code</a></li>
+            <li><a href="guides/save-claude-quota-with-orchestration.html">Save Claude Quota</a></li>
+            <li><a href="guides/git-worktrees-for-ai-agents.html">Git Worktrees Guide</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Project</h4>
+          <ul>
+            <li><a href="https://github.com/lordon1a/foxpit-releases" target="_blank" rel="noopener noreferrer">Releases Repository</a></li>
+            <li><a href="https://github.com/lordon1a/foxpit-releases/releases" target="_blank" rel="noopener noreferrer">Releases &amp; Changelog</a></li>
+            <li><a href="https://github.com/lordon1a/foxpit-releases/issues" target="_blank" rel="noopener noreferrer">Issue Tracker</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Foxpit. 3-day free trial, no card needed.</div>
+        <div>No telemetry &bull; Local-only (127.0.0.1)</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/site.js"></script>
+</body>
+</html>

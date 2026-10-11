@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#0E0C1A"/>
+  <!-- Left Ear -->
+  <polygon points="12,14 26,22 18,34" fill="#E68A69"/>
+  <polygon points="15,18 24,23 19,30" fill="#F4F0EA"/>
+  <!-- Right Ear -->
+  <polygon points="52,14 38,22 46,34" fill="#E68A69"/>
+  <polygon points="49,18 40,23 45,30" fill="#F4F0EA"/>
+  <!-- Face Outer -->
+  <polygon points="32,54 10,28 32,36 54,28" fill="#E68A69"/>
+  <!-- White Cheeks -->
+  <polygon points="32,54 18,34 26,38" fill="#F4F0EA"/>
+  <polygon points="32,54 46,34 38,38" fill="#F4F0EA"/>
+  <!-- Forehead Accent -->
+  <polygon points="32,22 24,34 32,37 40,34" fill="#E68A69"/>
+  <!-- Eyes -->
+  <circle cx="25" cy="34" r="2.2" fill="#0E0C1A"/>
+  <circle cx="39" cy="34" r="2.2" fill="#0E0C1A"/>
+  <!-- Nose -->
+  <polygon points="32,54 30,49 34,49" fill="#0E0C1A"/>
+</svg>

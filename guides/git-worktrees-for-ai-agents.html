@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Worktrees for AI Coding Agents: Guide</title>
+  <meta name="description" content="How to isolate parallel AI coding agents into independent Git worktrees to prevent file conflicts and branch collisions.">
+  <link rel="canonical" href="https://lordon1a.github.io/foxpit-releases/guides/git-worktrees-for-ai-agents.html">
+  <meta name="theme-color" content="#0E0C1A">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://lordon1a.github.io/foxpit-releases/guides/git-worktrees-for-ai-agents.html">
+  <meta property="og:title" content="Git Worktrees for AI Coding Agents: Guide">
+  <meta property="og:description" content="How to isolate parallel AI coding agents into independent Git worktrees to prevent file conflicts and branch collisions.">
+  <meta property="og:image" content="https://lordon1a.github.io/foxpit-releases/img/worktree.png">
+  <meta property="og:site_name" content="Foxpit">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Git Worktrees for AI Coding Agents: Guide">
+  <meta name="twitter:description" content="How to isolate parallel AI coding agents into independent Git worktrees to prevent file conflicts and branch collisions.">
+  <meta name="twitter:image" content="https://lordon1a.github.io/foxpit-releases/img/worktree.png">
+
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="manifest" href="../site.webmanifest">
+  <link rel="stylesheet" href="../assets/site.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Git Worktrees for AI Coding Agents: Guide",
+    "description": "How to isolate parallel AI coding agents into independent Git worktrees to prevent file conflicts and branch collisions.",
+    "url": "https://lordon1a.github.io/foxpit-releases/guides/git-worktrees-for-ai-agents.html",
+    "image": "https://lordon1a.github.io/foxpit-releases/img/worktree.png",
+    "datePublished": "2026-10-06",
+    "author": {
+      "@type": "Organization",
+      "name": "Foxpit Team"
+    }
+  }
+  </script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="../index.html" class="brand" aria-label="Foxpit Homepage">
+        <svg width="28" height="28" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#E68A69"/>
+          <polygon points="12,14 26,22 18,34" fill="#0E0C1A"/>
+          <polygon points="52,14 38,22 46,34" fill="#0E0C1A"/>
+          <polygon points="32,54 10,28 32,36 54,28" fill="#0E0C1A"/>
+          <polygon points="32,54 18,34 26,38" fill="#F4F0EA"/>
+          <polygon points="32,54 46,34 38,38" fill="#F4F0EA"/>
+        </svg>
+        <span>Foxpit</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary Navigation">
+        <a href="../getting-started.html">Getting Started</a>
+        <a href="../alternatives.html">Alternatives</a>
+        <a href="../faq.html">FAQ</a>
+        <a href="git-worktrees-for-ai-agents.html" class="active">Guides</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="https://github.com/lordon1a/foxpit-releases" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+        <a href="../getting-started.html#download" class="btn btn-primary btn-sm">
+          Download
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div class="container">
+      <ul class="breadcrumbs" aria-label="Breadcrumb">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../getting-started.html">Docs</a></li>
+        <li><span>Guides</span></li>
+        <li aria-current="page">Git Worktrees for AI Agents</li>
+      </ul>
+
+      <div class="content-wrapper">
+        <article>
+          <h1>Git Worktrees for AI Coding Agents: Guide</h1>
+          <p class="lead">
+            Running autonomous coding agents simultaneously without file corruption requires isolated disk checkouts. Here is why Git worktrees are the optimal isolation mechanism for AI developers.
+          </p>
+
+          <div class="meta-bar">
+            <span>Published: October 2026</span>
+            <span>Reading time: 6 min</span>
+            <span>Topic: Git Worktrees &amp; Concurrency</span>
+          </div>
+
+          <h2>Why Traditional Branching Fails for AI Agents</h2>
+          <p>
+            Human developers switch branches sequentially: you finish an edit, commit, and run <code>git checkout another-branch</code>. However, autonomous agents work asynchronously and concurrently.
+          </p>
+          <p>
+            If you attempt to run Agent A on <code>feature/login</code> and Agent B on <code>bugfix/header</code> within the same folder, you encounter disaster:
+          </p>
+          <ul>
+            <li><strong>Single Working Tree:</strong> Git only allows one active checked-out branch per directory. Running <code>git checkout</code> in one terminal disrupts whatever files the other agent is currently reading or editing.</li>
+            <li><strong>Dirty Index Lockouts:</strong> If Agent A has uncommitted modifications, Git will block Agent B from switching branches.</li>
+            <li><strong>Ghost Edits:</strong> Agent A might accidentally commit files created by Agent B, contaminating commit history.</li>
+          </ul>
+
+          <h2>Worktrees vs. Multiple Clones</h2>
+          <p>
+            A common workaround is cloning the entire repository into multiple folders (<code>repo-copy-1</code>, <code>repo-copy-2</code>). While this provides isolation, it introduces serious drawbacks:
+          </p>
+
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Approach</th>
+                  <th>Disk Space</th>
+                  <th>Sync Speed</th>
+                  <th>Commit Visibility</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Full Git Clone</strong></td>
+                  <td>Duplicates entire history (slow, heavy)</td>
+                  <td>Requires manual <code>git push/pull</code> between local directories</td>
+                  <td>Isolated until pushed to remote</td>
+                </tr>
+                <tr>
+                  <td><strong>Git Worktree</strong></td>
+                  <td>Near-zero overhead (shared <code>.git/objects</code>)</td>
+                  <td>Instantaneous (direct pointer reference)</td>
+                  <td>Commits immediately accessible across all worktrees</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>
+            Git worktrees allow multiple directories to be attached to a single local Git repository. Each worktree has its own working directory and checked-out branch, but they share the exact same object database and commit history.
+          </p>
+
+          <h2>Essential Git Worktree Commands for AI Workflows</h2>
+
+          <h3>1. Creating a New Worktree for an Agent</h3>
+          <p>
+            To assign an agent its own working space, run <code>git worktree add</code>. Specify the destination directory path and the branch name:
+          </p>
+
+          <pre><code># Create worktree for sub-agent on branch 'agent/refactor-auth'
+git worktree add ../agent-refactor-auth -b agent/refactor-auth
+
+# Change directory into the new worktree
+cd ../agent-refactor-auth</code></pre>
+
+          <p>
+            You can now launch Claude Code, Codex, or OpenCode inside <code>../agent-refactor-auth</code>. The agent can modify, create, and delete files without touching your main working directory.
+          </p>
+
+          <h3>2. Listing Active Worktrees</h3>
+          <p>
+            To inspect all active agent workspaces across your repository:
+          </p>
+
+          <pre><code>git worktree list</code></pre>
+
+          <p>
+            Output displays the directory path, commit hash, and branch name for every active worktree:
+          </p>
+
+          <pre><code>C:/dev/my-project          a81b3f9 [main]
+C:/dev/agent-refactor-auth  9f2a014 [agent/refactor-auth]</code></pre>
+
+          <h3>3. Merging and Teardown</h3>
+          <p>
+            When the agent finishes its task and verifies test results:
+          </p>
+
+          <pre><code># Return to your main repository directory
+cd ../my-project
+
+# Review agent diff
+git diff main..agent/refactor-auth
+
+# Merge the clean branch
+git merge --no-ff agent/refactor-auth
+
+# Delete the agent worktree directory
+git worktree remove ../agent-refactor-auth
+
+# Clean up any stale worktree references
+git worktree prune</code></pre>
+
+          <h2>How Foxpit Automates Worktree Management</h2>
+          <p>
+            Typing manual worktree commands for every parallel agent can interrupt your flow. <strong>Foxpit</strong> automates the entire lifecycle:
+          </p>
+
+          <ul>
+            <li><strong>Automatic Provisioning:</strong> When you spawn a new sub-agent in Foxpit with isolation enabled, the app automatically creates a worktree directory linked to your repo.</li>
+            <li><strong>Worktree Indicator Badge:</strong> The cockpit displays the current worktree directory and branch status prominently in the agent's header.</li>
+            <li><strong>Diff Inspection:</strong> Review changes made in the worktree directly within the desktop UI before approving merges.</li>
+            <li><strong>Guided Cleanup:</strong> From the worktree badge you can remove a finished worktree; Foxpit refuses to force-delete one with uncommitted changes and prunes stale records so orphaned directories do not pile up.</li>
+          </ul>
+
+          <div class="screenshot-frame">
+            <div class="screenshot-bar">
+              <span class="screenshot-dot"></span>
+              <span class="screenshot-dot"></span>
+              <span class="screenshot-dot"></span>
+              <span class="screenshot-title">Foxpit Git Worktree Interface</span>
+            </div>
+            <img src="../img/worktree.png" alt="Foxpit interface displaying Git worktree status and branch details for autonomous coding agents" width="1600" height="900" loading="lazy">
+          </div>
+
+          <h2>Best Practices for Multi-Agent Worktrees</h2>
+          <ol>
+            <li><strong>Always use descriptive branch prefixes:</strong> Standardize on <code>agent/&lt;purpose&gt;</code> or <code>sub/&lt;issue-id&gt;</code> to keep <code>git branch</code> clean.</li>
+            <li><strong>Ensure your build artifacts are ignored:</strong> Verify that <code>node_modules/</code>, <code>target/</code>, and <code>build/</code> are in <code>.gitignore</code> so worktree creation stays fast.</li>
+            <li><strong>Prune regularly:</strong> Run <code>git worktree prune</code> occasionally if you remove worktree folders manually.</li>
+          </ol>
+
+          <div style="margin-top: 3rem; text-align: center;">
+            <p>Ready to try automated worktrees with your coding agents?</p>
+            <p>
+              <a href="../getting-started.html" class="btn btn-primary btn-sm" style="margin-right: 0.5rem;">Download Foxpit</a>
+              <a href="run-multiple-claude-code-agents.html" class="btn btn-secondary btn-sm">Parallel Claude Code Guide</a>
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <rect width="64" height="64" rx="14" fill="#E68A69"/>
+              <polygon points="12,14 26,22 18,34" fill="#0E0C1A"/>
+              <polygon points="52,14 38,22 46,34" fill="#0E0C1A"/>
+              <polygon points="32,54 10,28 32,36 54,28" fill="#0E0C1A"/>
+            </svg>
+            <span>Foxpit</span>
+          </div>
+          <p>Multi-agent cockpit for Claude Code, Codex, and OpenCode. Real terminals, 3D office, and Git worktree isolation.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../getting-started.html">Getting Started</a></li>
+            <li><a href="../alternatives.html">Alternatives</a></li>
+            <li><a href="../faq.html">FAQ</a></li>
+            <li><a href="../privacy.html">Privacy</a></li>
+            <li><a href="../terms.html">Terms</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Guides</h4>
+          <ul>
+            <li><a href="run-multiple-claude-code-agents.html">Parallel Claude Code</a></li>
+            <li><a href="save-claude-quota-with-orchestration.html">Save Claude Quota</a></li>
+            <li><a href="git-worktrees-for-ai-agents.html">Git Worktrees Guide</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Project</h4>
+          <ul>
+            <li><a href="https://github.com/lordon1a/foxpit-releases" target="_blank" rel="noopener noreferrer">Releases Repository</a></li>
+            <li><a href="https://github.com/lordon1a/foxpit-releases/releases" target="_blank" rel="noopener noreferrer">Releases &amp; Changelog</a></li>
+            <li><a href="https://github.com/lordon1a/foxpit-releases/issues" target="_blank" rel="noopener noreferrer">Issue Tracker</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Foxpit. 3-day free trial, no card needed.</div>
+        <div>No telemetry &bull; Local-only (127.0.0.1)</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/site.js"></script>
+</body>
+</html>

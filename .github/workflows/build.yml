@@ -68,7 +68,7 @@ jobs:
         run: |
           node -e '
             const s = process.env.SECIM.split(",").map((x) => x.trim().toLowerCase());
-            // macos-latest = Apple Silicon (arm64 dmg/zip). Linux 24.04: AppImage eski glibc'li dağıtımlarda da açılsın.
+            // macos-latest = Apple Silicon (arm64 dmg/zip). Linux 24.04: AppImage eski glibc kullanan dağıtımlarda da açılsın.
             const os = { mac: "macos-latest", linux: "ubuntu-24.04" };
             const l = s.map((x) => os[x]).filter(Boolean);
             if (!l.length) { console.error("no platform: " + process.env.SECIM); process.exit(1); }

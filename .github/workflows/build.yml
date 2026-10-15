@@ -1,0 +1,146 @@
+# .github/workflows/build.yml — Foxpit Mac/Linux paketlerini derleyip bu depodaki sürüme ekler (elle çalışır).
+#
+# Kaynak gizli lordon1a/foxpit'te; orada Actions dakikası ücretli (Mac 10x) ve bütçe kilitli. Bu depo herkese
+# açık olduğu için standart koşucular (macOS dahil) ücretsiz. Kaynak ve motor fork'u (lordon1a/foxpit-hermes)
+# FOXPIT_SOURCE_TOKEN ile salt okunur çekilir; paketler bu deponun kendi GITHUB_TOKEN'ıyla yüklenir.
+# Yalnız workflow_dispatch: depoya yazma yetkisi olmayan kimse çalıştıramaz, secret dışarı açılmaz.
+# Çalıştırma: gh workflow run build.yml -R lordon1a/foxpit-releases -f tag=v0.1.11 -f platforms=mac,linux
+# Windows yerelde derlenir (scripts/surum_yukle.mjs). Sürüm yoksa taslak açılır ve sonunda yayınlanır;
+# varsa yalnız dosyalar eklenir (aynı ad üzerine yazılır), "latest" işareti değişmez.
+name: Build Mac/Linux
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version tag in lordon1a/foxpit (e.g. v0.1.11)'
+        required: true
+      platforms:
+        description: 'Comma list: mac, linux'
+        required: true
+        default: 'mac,linux'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ inputs.tag }}
+
+env:
+  SOURCE_REPO: lordon1a/foxpit
+  FOXPIT_RELEASES_REPO: ${{ github.repository }}
+
+jobs:
+  hazirla:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+      taslak: ${{ steps.d.outputs.taslak }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          ref: ${{ inputs.tag }}
+          token: ${{ secrets.FOXPIT_SOURCE_TOKEN }}
+          sparse-checkout: |
+            CHANGELOG.md
+            scripts/surum-notlari.mjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - id: d
+        name: Draft release (if missing)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          if gh release view "$TAG" --repo "$FOXPIT_RELEASES_REPO" >/dev/null 2>&1; then
+            echo "taslak=0" >> "$GITHUB_OUTPUT"
+          else
+            node scripts/surum-notlari.mjs "$TAG" CHANGELOG.md release-notes.md
+            gh release create "$TAG" --repo "$FOXPIT_RELEASES_REPO" --draft --title "Foxpit ${TAG#v}" --notes-file release-notes.md
+            echo "taslak=1" >> "$GITHUB_OUTPUT"
+          fi
+      - id: m
+        env:
+          SECIM: ${{ inputs.platforms }}
+        run: |
+          node -e '
+            const s = process.env.SECIM.split(",").map((x) => x.trim().toLowerCase());
+            // macos-latest = Apple Silicon (arm64 dmg/zip). Linux 24.04: AppImage eski glibc'li dağıtımlarda da açılsın.
+            const os = { mac: "macos-latest", linux: "ubuntu-24.04" };
+            const l = s.map((x) => os[x]).filter(Boolean);
+            if (!l.length) { console.error("no platform: " + process.env.SECIM); process.exit(1); }
+            console.log("matrix=" + JSON.stringify({ os: [...new Set(l)] }));
+          ' >> "$GITHUB_OUTPUT"
+
+  paketle:
+    needs: hazirla
+    name: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.hazirla.outputs.matrix) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          ref: ${{ inputs.tag }}
+          token: ${{ secrets.FOXPIT_SOURCE_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Dependencies
+        run: npm ci --no-audit --no-fund
+
+      # Yerleşik sohbet (Foxpit Chat): arayüz ve motor paketi fork'tan derlenir (vendor/ kaynak deposunda değil).
+      - name: Engine fork
+        uses: actions/checkout@v4
+        with:
+          repository: lordon1a/foxpit-hermes
+          ref: main
+          path: foxpit-hermes
+          token: ${{ secrets.FOXPIT_SOURCE_TOKEN }}
+
+      - name: Build Foxpit Chat UI and engine bundle
+        env:
+          FOXPIT_HERMES_KAYNAK: ${{ github.workspace }}/foxpit-hermes
+        run: |
+          git -C foxpit-hermes checkout -q -b foxpit
+          # Motor paketi önce: npm install fork'un kilit dosyasını değiştirir, paketleyici temiz ağaç ister.
+          node scripts/hermes_motor_paketle.mjs
+          (cd foxpit-hermes && npm install --workspace apps/desktop --include-workspace-root --ignore-scripts --no-audit --no-fund)
+          node scripts/hermes_ui_derle.mjs
+          test -f vendor/hermes-ui/index.html && test -f vendor/hermes-engine/install.ps1
+
+      # electron-builder.yml'de npmRebuild: false; node-pty Electron ABI'si için burada derlenir.
+      - name: Build node-pty for Electron
+        run: npx @electron/rebuild -f -w node-pty
+
+      - name: Build
+        run: npx electron-builder --publish never
+
+      - name: Upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          shopt -s nullglob
+          dosyalar=(dist/*.dmg dist/*-mac.zip dist/*.AppImage dist/*.blockmap dist/latest-mac.yml dist/latest-linux.yml)
+          printf '%s\n' "${dosyalar[@]}"
+          node scripts/surum_yukle.mjs "$TAG" "${dosyalar[@]}"
+
+  yayimla:
+    needs: [hazirla, paketle]
+    if: needs.hazirla.outputs.taslak == '1'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: gh release edit "$TAG" --repo "$FOXPIT_RELEASES_REPO" --draft=false

@@ -130,7 +130,7 @@ jobs:
           TAG: ${{ inputs.tag }}
         run: |
           shopt -s nullglob
-          dosyalar=(dist/*.dmg dist/*-mac.zip dist/*.AppImage dist/*.blockmap dist/latest-mac.yml dist/latest-linux.yml)
+          dosyalar=(dist/*.dmg dist/*-mac.zip dist/*.AppImage dist/*.blockmap dist/latest-*.yml)
           printf '%s\n' "${dosyalar[@]}"
           node scripts/surum_yukle.mjs "$TAG" "${dosyalar[@]}"
 

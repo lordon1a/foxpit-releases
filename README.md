@@ -8,7 +8,7 @@ Foxpit is a desktop app that runs Claude Code, Codex, OpenCode and Antigravity a
 - **Visible work.** Real terminals side by side, and a 3D office where every project is a room and you can see who is working, stuck or waiting for approval.
 - **Your own accounts.** Agents run with your own subscriptions or API keys; your code stays on your machine.
 
-Website: **[foxpit.dev](https://foxpit.dev/?utm_source=github&utm_medium=readme&utm_campaign=releases)** · Setup guide: [foxpit.dev/getting-started](https://foxpit.dev/getting-started.html?utm_source=github&utm_medium=readme&utm_campaign=releases)
+Website: **[foxpit.dev](https://foxpit.dev/?utm_source=github&utm_medium=readme&utm_campaign=releases)** · Setup guide: [foxpit.dev/getting-started](https://foxpit.dev/getting-started.html?utm_source=github&utm_medium=readme&utm_campaign=releases) · [X](https://x.com/foxpitai) · [YouTube](https://www.youtube.com/@foxpitdev)
 
 ## Download
 

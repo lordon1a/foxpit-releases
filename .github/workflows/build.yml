@@ -124,6 +124,21 @@ jobs:
       - name: Build
         run: npx electron-builder --publish never
 
+      # Açılıştaki bütünlük denetimi (electron/butunluk.cjs) imzalanmış paket üzerinde koşar; geçmezse uygulama
+      # her açılışta "Foxpit is damaged" der (0.1.25 Mac). Paket yüklenmeden önce aynı denetim burada çalışır.
+      - name: Check packaged files
+        run: |
+          shopt -s nullglob
+          dizinler=(dist/mac*/Foxpit.app/Contents/Resources dist/linux-unpacked/resources)
+          [ ${#dizinler[@]} -gt 0 ] || { echo "no packaged app found"; exit 1; }
+          for d in "${dizinler[@]}"; do
+            node -e '
+              const r = require("./electron/butunluk.cjs").acikDosyalariDenetle({ kaynakDizin: process.argv[1] });
+              console.log(process.argv[1], r.tamam ? "ok" : "DAMAGED", r.bozuk.join(", "));
+              if (!r.tamam) process.exit(1);
+            ' "$d"
+          done
+
       - name: Upload
         env:
           GH_TOKEN: ${{ github.token }}

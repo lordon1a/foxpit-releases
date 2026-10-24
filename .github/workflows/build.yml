@@ -129,7 +129,7 @@ jobs:
       - name: Check packaged files
         run: |
           shopt -s nullglob
-          dizinler=(dist/mac*/Foxpit.app/Contents/Resources dist/linux-unpacked/resources)
+          dizinler=(dist/mac*/Foxpit.app/Contents/Resources dist/linux-unpacked*/resources)
           [ ${#dizinler[@]} -gt 0 ] || { echo "no packaged app found"; exit 1; }
           for d in "${dizinler[@]}"; do
             node -e '

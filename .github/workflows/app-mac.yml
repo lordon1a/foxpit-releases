@@ -1,7 +1,9 @@
 # Foxpit app (Go + Wails) for macOS: a test build, not a release.
 # The source is not in this repo: it comes as foxpit-app-src.zip on a draft
 # release (drafts are only visible to people who can write here), which is
-# deleted after the build. The .app comes out as this run's artifact.
+# deleted after the build. Magpie (MIT, yetone/magpie) goes inside the .app,
+# so nothing else needs installing. One zip per Mac kind comes out as this
+# run's artifact: Apple silicon (arm64) and Intel (amd64).
 # Run: gh workflow run app-mac.yml -R lordon1a/foxpit-releases -f release_id=<draft id> -f version=0.2.0
 name: Foxpit app - Mac test build
 
@@ -35,7 +37,19 @@ jobs:
         with:
           go-version-file: src/go.mod
           cache-dependency-path: src/go.sum
-      - name: Build (Apple silicon + Intel)
+      - name: Get Magpie (checksum checked)
+        working-directory: src
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mpv=$(tr -d '[:space:]' < MAGPIE_VERSION)
+          mkdir mp && cd mp
+          gh release download "$mpv" -R yetone/magpie -p 'magpie-cli-darwin-arm64' -p 'magpie-cli-darwin-amd64' -p 'SHA256SUMS'
+          grep -E 'magpie-cli-darwin-(arm64|amd64)$' SHA256SUMS | shasum -a 256 -c -
+          chmod +x magpie-cli-darwin-*
+          ./magpie-cli-darwin-arm64 --version || true
+          ./magpie-cli-darwin-arm64 --help 2>&1 | head -40 || true
+      - name: Build
         working-directory: src
         env:
           CGO_ENABLED: '1'
@@ -46,56 +60,66 @@ jobs:
           for a in arm64 amd64; do
             GOARCH=$a go build -trimpath -ldflags="-s -w -X main.version=$V" -o "foxpit-$a" .
           done
-          lipo -create -output foxpit foxpit-arm64 foxpit-amd64
-          lipo -info foxpit
-      - name: Starts on macOS (page + API, no window)
-        working-directory: src
-        run: |
-          ./foxpit --dev-http 127.0.0.1:3555 & pid=$!
-          for i in $(seq 1 30); do curl -sf http://127.0.0.1:3555/ >/dev/null && break; sleep 1; done
-          curl -sf http://127.0.0.1:3555/ | head -c 300; echo
-          curl -sf http://127.0.0.1:3555/api/backend | head -c 120; echo
-          kill $pid || true
-          tail -20 ~/Library/Caches/Foxpit/foxpit.log 2>/dev/null || true
-      - name: Make Foxpit.app
+      - name: Make Foxpit.app (one per Mac kind)
         working-directory: src
         env:
           V: ${{ inputs.version }}
         run: |
-          app=Foxpit.app
-          mkdir -p $app/Contents/MacOS $app/Contents/Resources
-          cp foxpit $app/Contents/MacOS/foxpit
           set=icon.iconset; mkdir $set
           for s in 16 32 128 256; do
             sips -z $s $s build/icon-256.png --out $set/icon_${s}x${s}.png >/dev/null
             d=$((s*2)); sips -z $d $d build/icon-256.png --out $set/icon_${s}x${s}@2x.png >/dev/null
           done
-          iconutil -c icns $set -o $app/Contents/Resources/icon.icns
-          printf '%s\n' \
-            '<?xml version="1.0" encoding="UTF-8"?>' \
-            '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' \
-            '<plist version="1.0"><dict>' \
-            '<key>CFBundleName</key><string>Foxpit</string>' \
-            '<key>CFBundleDisplayName</key><string>Foxpit</string>' \
-            '<key>CFBundleExecutable</key><string>foxpit</string>' \
-            '<key>CFBundleIdentifier</key><string>dev.foxpit.app</string>' \
-            '<key>CFBundleIconFile</key><string>icon</string>' \
-            '<key>CFBundlePackageType</key><string>APPL</string>' \
-            "<key>CFBundleShortVersionString</key><string>$V</string>" \
-            "<key>CFBundleVersion</key><string>$V</string>" \
-            '<key>LSMinimumSystemVersion</key><string>12.0</string>' \
-            '<key>NSHighResolutionCapable</key><true/>' \
-            '<key>NSAppleEventsUsageDescription</key><string>Foxpit opens Terminal for account sign-in.</string>' \
-            '</dict></plist>' > $app/Contents/Info.plist
-          plutil -lint $app/Contents/Info.plist
-          codesign --force --deep --sign - $app
-          codesign --verify --verbose $app
-          ditto -c -k --keepParent $app "../Foxpit-$V-mac.zip"
+          iconutil -c icns $set -o icon.icns
+          for a in arm64 amd64; do
+            kind=$([ $a = arm64 ] && echo apple-silicon || echo intel)
+            app=out-$a/Foxpit.app
+            mkdir -p $app/Contents/MacOS $app/Contents/Resources
+            cp foxpit-$a $app/Contents/MacOS/foxpit
+            cp mp/magpie-cli-darwin-$a $app/Contents/MacOS/magpie
+            cp icon.icns $app/Contents/Resources/icon.icns
+            printf '%s\n' \
+              '<?xml version="1.0" encoding="UTF-8"?>' \
+              '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' \
+              '<plist version="1.0"><dict>' \
+              '<key>CFBundleName</key><string>Foxpit</string>' \
+              '<key>CFBundleDisplayName</key><string>Foxpit</string>' \
+              '<key>CFBundleExecutable</key><string>foxpit</string>' \
+              '<key>CFBundleIdentifier</key><string>dev.foxpit.app</string>' \
+              '<key>CFBundleIconFile</key><string>icon</string>' \
+              '<key>CFBundlePackageType</key><string>APPL</string>' \
+              "<key>CFBundleShortVersionString</key><string>$V</string>" \
+              "<key>CFBundleVersion</key><string>$V</string>" \
+              '<key>LSMinimumSystemVersion</key><string>12.0</string>' \
+              '<key>NSHighResolutionCapable</key><true/>' \
+              '<key>NSAppleEventsUsageDescription</key><string>Foxpit opens Terminal for account sign-in.</string>' \
+              '</dict></plist>' > $app/Contents/Info.plist
+            plutil -lint $app/Contents/Info.plist
+            codesign --force --sign - $app/Contents/MacOS/magpie
+            codesign --force --sign - $app
+            codesign --verify --deep --verbose $app
+            (cd out-$a && ditto -c -k --keepParent Foxpit.app "../../Foxpit-$V-mac-$kind.zip")
+          done
           ls -la ..
+      - name: Starts on macOS with its own Magpie (page, API, gateway; no window)
+        working-directory: src
+        run: |
+          export HOME=$RUNNER_TEMP/home; mkdir -p $HOME
+          out-arm64/Foxpit.app/Contents/MacOS/foxpit --dev-http 127.0.0.1:3555 & pid=$!
+          for i in $(seq 1 40); do curl -sf http://127.0.0.1:3555/ >/dev/null && break; sleep 1; done
+          curl -sf http://127.0.0.1:3555/ | head -c 80; echo
+          for i in $(seq 1 30); do s=$(curl -s http://127.0.0.1:3555/api/magpie/setup); echo "$s" | grep -q '"gateway":true' && break; sleep 2; done
+          echo "setup: $s"
+          curl -s http://127.0.0.1:3555/api/magpie/status | head -c 300; echo
+          kill $pid || true
+          sleep 1
+          grep -v 'key' $HOME/Library/Caches/Foxpit/foxpit.log | tail -25 || true
+          echo "$s" | grep -q '"magpie":true'
+          echo "$s" | grep -q '"gateway":true'
       - uses: actions/upload-artifact@v4
         with:
           name: Foxpit-${{ inputs.version }}-mac
-          path: Foxpit-${{ inputs.version }}-mac.zip
+          path: Foxpit-${{ inputs.version }}-mac-*.zip
           retention-days: 7
       - name: Delete the source draft
         if: always()

@@ -16,6 +16,10 @@ on:
       version:
         description: 'App version (e.g. 0.2.0)'
         required: true
+      tag:
+        description: 'Release to add the zips to (e.g. app-v0.2.0); empty = artifact only'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -116,6 +120,44 @@ jobs:
           grep -v 'key' $HOME/Library/Caches/Foxpit/foxpit.log | tail -25 || true
           echo "$s" | grep -q '"magpie":true'
           echo "$s" | grep -q '"gateway":true'
+      - name: Updates itself (an older Foxpit.app takes this build from a local feed)
+        working-directory: src
+        env:
+          V: ${{ inputs.version }}
+        run: |
+          export HOME=$RUNNER_TEMP/home2; mkdir -p $HOME
+          apps=$RUNNER_TEMP/Apps; mkdir -p $apps
+          GOARCH=arm64 CGO_ENABLED=1 MACOSX_DEPLOYMENT_TARGET=12.0 go build -trimpath -ldflags="-s -w -X main.version=0.0.1" -o foxpit-old .
+          cp -R out-arm64/Foxpit.app $apps/Foxpit.app
+          cp foxpit-old $apps/Foxpit.app/Contents/MacOS/foxpit
+          sed -i '' "s#<string>$V</string>#<string>0.0.1</string>#g" $apps/Foxpit.app/Contents/Info.plist
+          codesign --force --sign - $apps/Foxpit.app
+          feed=$RUNNER_TEMP/feed; mkdir -p $feed
+          z=Foxpit-$V-mac-apple-silicon.zip
+          cp ../$z $feed/
+          sum=$(shasum -a 256 $feed/$z | cut -d' ' -f1); size=$(stat -f%z $feed/$z)
+          printf '[{"tag_name":"app-v%s","draft":false,"prerelease":false,"body":"test","assets":[{"name":"%s","browser_download_url":"http://127.0.0.1:3591/%s","digest":"sha256:%s","size":%s}]}]' "$V" "$z" "$z" "$sum" "$size" > $feed/releases.json
+          (cd $feed && python3 -m http.server 3591 --bind 127.0.0.1 >/dev/null 2>&1 &)
+          sleep 1
+          FOXPIT_UPDATE_FEED=http://127.0.0.1:3591/releases.json $apps/Foxpit.app/Contents/MacOS/foxpit --dev-http 127.0.0.1:3556 & pid=$!
+          for i in $(seq 1 40); do curl -sf http://127.0.0.1:3556/api/update >/dev/null && break; sleep 1; done
+          curl -s http://127.0.0.1:3556/api/update; echo
+          curl -s -X POST -H 'Origin: http://127.0.0.1:3556' http://127.0.0.1:3556/api/update/check >/dev/null
+          for i in $(seq 1 60); do s=$(curl -s http://127.0.0.1:3556/api/update); echo "$s" | grep -qE '"state":"(ready|error|idle)"' && break; sleep 2; done
+          echo "after: $s"
+          kill $pid || true
+          echo "$s" | grep -q '"state":"ready"'
+          grep -A1 CFBundleShortVersionString $apps/Foxpit.app/Contents/Info.plist
+          grep -q "<string>$V</string>" $apps/Foxpit.app/Contents/Info.plist
+          codesign --verify --deep --strict $apps/Foxpit.app
+          ls -a $apps $apps/.foxpit-update
+          test -d $apps/.foxpit-update/old
+      - name: Add to release ${{ inputs.tag }}
+        if: inputs.tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: gh release upload "$TAG" Foxpit-*-mac-*.zip -R "$GITHUB_REPOSITORY" --clobber
       - uses: actions/upload-artifact@v4
         with:
           name: Foxpit-${{ inputs.version }}-mac

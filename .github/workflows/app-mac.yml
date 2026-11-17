@@ -150,7 +150,7 @@ jobs:
           cp -R out-arm64/Foxpit.app $apps/Foxpit.app
           cp foxpit-old $apps/Foxpit.app/Contents/MacOS/foxpit
           sed -i '' "s#<string>$V</string>#<string>0.0.1</string>#g" $apps/Foxpit.app/Contents/Info.plist
-          codesign --force --timestamp=none --sign "$SIGN_ID" $apps/Foxpit.app
+          codesign --force --timestamp=none --keychain "$RUNNER_TEMP/sign.keychain-db" --sign "$SIGN_ID" $apps/Foxpit.app
           feed=$RUNNER_TEMP/feed; mkdir -p $feed
           z=Foxpit-$V-mac-apple-silicon.zip
           cp ../$z $feed/

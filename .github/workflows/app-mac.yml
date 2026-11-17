@@ -64,6 +64,24 @@ jobs:
           for a in arm64 amd64; do
             GOARCH=$a go build -trimpath -ldflags="-s -w -X main.version=$V" -o "foxpit-$a" .
           done
+      - name: Signing identity (self-signed, the same every build, so macOS keeps Foxpit's permissions across updates)
+        env:
+          P12: ${{ secrets.MAC_SIGN_P12 }}
+          PASS: ${{ secrets.MAC_SIGN_PASS }}
+        run: |
+          kc=$RUNNER_TEMP/sign.keychain-db; kp=$(openssl rand -hex 12)
+          security create-keychain -p "$kp" $kc
+          security set-keychain-settings -lut 21600 $kc
+          security unlock-keychain -p "$kp" $kc
+          printf %s "$P12" | base64 --decode > $RUNNER_TEMP/s.p12
+          security import $RUNNER_TEMP/s.p12 -k $kc -P "$PASS" -T /usr/bin/codesign >/dev/null
+          rm -f $RUNNER_TEMP/s.p12
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$kp" $kc >/dev/null
+          security list-keychains -d user -s $kc $(security list-keychains -d user | tr -d '"')
+          id=$(security find-certificate -c "Foxpit Self-Signed" -Z $kc | awk '/SHA-1/{print $NF}')
+          test -n "$id"
+          echo "SIGN_ID=$id" >> $GITHUB_ENV
+          echo "signing with $id"
       - name: Make Foxpit.app (one per Mac kind)
         working-directory: src
         env:
@@ -97,11 +115,18 @@ jobs:
               '<key>LSMinimumSystemVersion</key><string>12.0</string>' \
               '<key>NSHighResolutionCapable</key><true/>' \
               '<key>NSAppleEventsUsageDescription</key><string>Foxpit opens Terminal for account sign-in.</string>' \
+              '<key>NSDesktopFolderUsageDescription</key><string>The coding agents you run in Foxpit read and change project files in this folder.</string>' \
+              '<key>NSDocumentsFolderUsageDescription</key><string>The coding agents you run in Foxpit read and change project files in this folder.</string>' \
+              '<key>NSDownloadsFolderUsageDescription</key><string>The coding agents you run in Foxpit read and change project files in this folder.</string>' \
+              '<key>NSRemovableVolumesUsageDescription</key><string>The coding agents you run in Foxpit read and change project files on this drive.</string>' \
+              '<key>NSNetworkVolumesUsageDescription</key><string>The coding agents you run in Foxpit read and change project files on this drive.</string>' \
+              '<key>NSPhotoLibraryUsageDescription</key><string>A coding agent in Foxpit looked inside your Pictures folder. Foxpit itself never reads your photos.</string>' \
               '</dict></plist>' > $app/Contents/Info.plist
             plutil -lint $app/Contents/Info.plist
-            codesign --force --sign - $app/Contents/MacOS/magpie
-            codesign --force --sign - $app
+            codesign --force --timestamp=none --sign "$SIGN_ID" $app/Contents/MacOS/magpie
+            codesign --force --timestamp=none --sign "$SIGN_ID" $app
             codesign --verify --deep --verbose $app
+            codesign -d -r- $app 2>&1 | grep designated
             (cd out-$a && ditto -c -k --keepParent Foxpit.app "../../Foxpit-$V-mac-$kind.zip")
           done
           ls -la ..
@@ -131,7 +156,7 @@ jobs:
           cp -R out-arm64/Foxpit.app $apps/Foxpit.app
           cp foxpit-old $apps/Foxpit.app/Contents/MacOS/foxpit
           sed -i '' "s#<string>$V</string>#<string>0.0.1</string>#g" $apps/Foxpit.app/Contents/Info.plist
-          codesign --force --sign - $apps/Foxpit.app
+          codesign --force --timestamp=none --sign "$SIGN_ID" $apps/Foxpit.app
           feed=$RUNNER_TEMP/feed; mkdir -p $feed
           z=Foxpit-$V-mac-apple-silicon.zip
           cp ../$z $feed/

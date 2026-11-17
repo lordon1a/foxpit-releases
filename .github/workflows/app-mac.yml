@@ -144,13 +144,13 @@ jobs:
         env:
           V: ${{ inputs.version }}
         run: |
-          export HOME=$RUNNER_TEMP/home2; mkdir -p $HOME
           apps=$RUNNER_TEMP/Apps; mkdir -p $apps
           GOARCH=arm64 CGO_ENABLED=1 MACOSX_DEPLOYMENT_TARGET=12.0 go build -trimpath -ldflags="-s -w -X main.version=0.0.1" -o foxpit-old .
           cp -R out-arm64/Foxpit.app $apps/Foxpit.app
           cp foxpit-old $apps/Foxpit.app/Contents/MacOS/foxpit
           sed -i '' "s#<string>$V</string>#<string>0.0.1</string>#g" $apps/Foxpit.app/Contents/Info.plist
           codesign --force --timestamp=none --keychain "$RUNNER_TEMP/sign.keychain-db" --sign "$SIGN_ID" $apps/Foxpit.app
+          export HOME=$RUNNER_TEMP/home2; mkdir -p $HOME
           feed=$RUNNER_TEMP/feed; mkdir -p $feed
           z=Foxpit-$V-mac-apple-silicon.zip
           cp ../$z $feed/

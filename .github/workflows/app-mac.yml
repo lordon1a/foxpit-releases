@@ -1,28 +1,25 @@
-# Foxpit app (Go + Wails) for macOS: a test build, not a release.
-# The source is not in this repo: it comes as foxpit-app-src.zip on a draft
-# release (drafts are only visible to people who can write here), which is
-# deleted after the build. Magpie (MIT, yetone/magpie) goes inside the .app,
-# so nothing else needs installing. One zip per Mac kind comes out as this
-# run's artifact: Apple silicon (arm64) and Intel (amd64).
-# Run: gh workflow run app-mac.yml -R lordon1a/foxpit-releases -f release_id=<draft id> -f version=0.2.0
-name: Foxpit app - Mac test build
+# Foxpit app (Go + Wails) for macOS. The source is the public repo
+# lordon1a/foxpit-app at a tag or branch; this workflow lives in
+# lordon1a/foxpit-releases only because the signing identity's secrets are
+# kept there. Magpie (MIT, yetone/magpie) goes inside the .app, so nothing
+# else needs installing. One zip per Mac kind comes out as this run's
+# artifact: Apple silicon (arm64) and Intel (amd64); they are added to the
+# release in lordon1a/foxpit-app by hand (gh run download + gh release upload).
+# Run: gh workflow run app-mac.yml -R lordon1a/foxpit-releases -f ref=app-v0.2.4 -f version=0.2.4
+name: Foxpit app - Mac build
 
 on:
   workflow_dispatch:
     inputs:
-      release_id:
-        description: 'Draft release id holding foxpit-app-src.zip'
+      ref:
+        description: 'Tag or branch of lordon1a/foxpit-app to build (e.g. app-v0.2.4)'
         required: true
       version:
-        description: 'App version (e.g. 0.2.0)'
+        description: 'App version (e.g. 0.2.4)'
         required: true
-      tag:
-        description: 'Release to add the zips to (e.g. app-v0.2.0); empty = artifact only'
-        required: false
-        default: ''
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   mac:
@@ -30,13 +27,10 @@ jobs:
     steps:
       - name: Get the source
         env:
-          GH_TOKEN: ${{ github.token }}
-          RID: ${{ inputs.release_id }}
+          REF: ${{ inputs.ref }}
         run: |
-          aid=$(gh api "repos/$GITHUB_REPOSITORY/releases/$RID/assets" --jq '.[] | select(.name=="foxpit-app-src.zip") | .id')
-          test -n "$aid"
-          gh api -H 'Accept: application/octet-stream' "repos/$GITHUB_REPOSITORY/releases/assets/$aid" > src.zip
-          mkdir src && cd src && unzip -q ../src.zip && ls
+          git clone --depth 1 --branch "$REF" https://github.com/lordon1a/foxpit-app.git src
+          cd src && git log -1 --oneline && ls
       - uses: actions/setup-go@v5
         with:
           go-version-file: src/go.mod
@@ -177,20 +171,8 @@ jobs:
           codesign --verify --deep --strict $apps/Foxpit.app
           ls -a $apps $apps/.foxpit-update
           test -d $apps/.foxpit-update/old
-      - name: Add to release ${{ inputs.tag }}
-        if: inputs.tag != ''
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ inputs.tag }}
-        run: gh release upload "$TAG" Foxpit-*-mac-*.zip -R "$GITHUB_REPOSITORY" --clobber
       - uses: actions/upload-artifact@v4
         with:
           name: Foxpit-${{ inputs.version }}-mac
           path: Foxpit-${{ inputs.version }}-mac-*.zip
           retention-days: 7
-      - name: Delete the source draft
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RID: ${{ inputs.release_id }}
-        run: gh api -X DELETE "repos/$GITHUB_REPOSITORY/releases/$RID" || true
